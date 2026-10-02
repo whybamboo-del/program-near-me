@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research programs near you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16213E; --ink-2:#4A5574; --paper:#F4F6FA; --surface:#FFFFFF; --line:#DCE1EC;
+  --open:#0E8F80; --open-bg:#DDF3EF; --ask:#B97A00; --ask-bg:#FDF0D2; --no:#C9473D; --no-bg:#FBE3E0;
+  --link:#2459D6; --focus:#2459D6;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E8ECF6; --ink-2:#A7B0C8; --paper:#0F1526; --surface:#18203A; --line:#2B3555;
+    --open:#4FD1BE; --open-bg:#123A38; --ask:#F2C14E; --ask-bg:#3A3015; --no:#F08277; --no-bg:#3D1F22;
+    --link:#8DB0FF; --focus:#8DB0FF;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E8ECF6; --ink-2:#A7B0C8; --paper:#0F1526; --surface:#18203A; --line:#2B3555;
+  --open:#4FD1BE; --open-bg:#123A38; --ask:#F2C14E; --ask-bg:#3A3015; --no:#F08277; --no-bg:#3D1F22;
+  --link:#8DB0FF; --focus:#8DB0FF;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{padding:56px 0 28px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.3rem,6vw,4.2rem);line-height:1;letter-spacing:-.02em;margin:0 0 16px;max-width:14ch}
+.lede{max-width:60ch;color:var(--ink-2);margin:0}
+.next{margin-top:22px;display:inline-flex;gap:10px;align-items:baseline;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--open);padding:12px 16px;border-radius:10px}
+.next strong{font-family:var(--display);font-size:1.05rem}
+
+/* Calendar: the one bold element */
+.cal{margin:28px 0 8px;background:var(--ink);color:var(--paper);border-radius:22px;padding:24px 20px 26px}
+.cal h2{font-family:var(--display);font-weight:700;font-size:1.5rem;margin:0 4px 4px}
+.cal p{margin:0 4px 18px;color:color-mix(in srgb,var(--paper) 75%,transparent);font-size:.95rem}
+.months{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;overflow-x:auto}
+.month{border-top:3px solid color-mix(in srgb,var(--paper) 35%,transparent);padding-top:10px;min-width:120px}
+.month h3{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;margin:0 0 10px;letter-spacing:-.02em}
+.pill{display:block;width:100%;text-align:left;border:0;cursor:pointer;margin:0 0 8px;padding:8px 10px;border-radius:10px;font:inherit;font-size:.85rem;line-height:1.25;color:#16213E}
+.pill b{display:block;font-size:.78rem;font-weight:700;opacity:.8}
+.pill.open{background:#7FE0D1}.pill.ask{background:#F6CF6E}
+.pill:hover{filter:brightness(1.07)}
+@media (max-width:760px){
+  .months{grid-template-columns:1fr;overflow:visible}
+  .month{display:grid;grid-template-columns:70px 1fr;gap:10px;min-width:0}
+  .month h3{font-size:1.5rem}
+}
+
+/* Filters + list */
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:34px 0 14px}
+.tools h2{font-family:var(--display);font-size:1.6rem;margin:0 16px 0 0;flex-basis:100%}
+.f{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem;padding:7px 14px;border-radius:999px;cursor:pointer}
+.f[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.count{color:var(--ink-2);font-size:.92rem;margin-left:auto}
+.list{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.prog{border-bottom:1px solid var(--line)}
+.prog details{padding:0}
+.prog summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 4px}
+.prog summary::-webkit-details-marker{display:none}
+.icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.35rem;background:var(--surface);border:1px solid var(--line)}
+.name{font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.2}
+.inst{color:var(--ink-2);font-size:.9rem}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.85rem}
+.chip{padding:2px 9px;border-radius:6px;font-weight:700}
+.chip.open{background:var(--open-bg);color:var(--open)}.chip.ask{background:var(--ask-bg);color:var(--ask)}.chip.no{background:var(--no-bg);color:var(--no)}
+.chip.plain{background:transparent;border:1px solid var(--line);color:var(--ink-2);font-weight:400}
+.chev{font-size:1.2rem;color:var(--ink-2);transition:transform .2s}
+details[open] .chev{transform:rotate(90deg)}
+.body{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;padding:4px 4px 22px 62px}
+.facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.95rem}
+.facts dt{font-weight:700}.facts dd{margin:0;color:var(--ink-2)}
+.desc{margin:0 0 14px;max-width:60ch}
+.go{display:inline-block;background:var(--link);color:var(--surface);text-decoration:none;font-weight:700;padding:10px 18px;border-radius:10px}
+@media (max-width:760px){
+  .body{grid-template-columns:1fr;padding-left:4px;gap:14px}
+  .prog summary{grid-template-columns:40px 1fr auto}
+}
+footer{margin:40px 0 50px;color:var(--ink-2);font-size:.9rem;max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%{background:var(--ask-bg)}100%{background:transparent}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Research programs near you</h1>
+  <p class="lede">Sixteen summer and school-year programs within reach of Bergen County. Each one shows who can apply, what you would actually do, and a link to the official site.</p>
+  <div class="next" id="next"></div>
+</header>
+
+<section class="cal" aria-labelledby="calh">
+  <h2 id="calh">Deadline calendar</h2>
+  <p>Programs you can apply to (or should ask about), by application deadline. Tap one to see details.</p>
+  <div class="months" id="months"></div>
+</section>
+
+<section aria-labelledby="listh">
+  <div class="tools" role="group" aria-label="Filter programs">
+    <h2 id="listh">All programs</h2>
+    <button class="f" data-f="all" aria-pressed="true">All</button>
+    <button class="f" data-f="open" aria-pressed="false">Open to you</button>
+    <button class="f" data-f="free" aria-pressed="false">Free</button>
+    <button class="f" data-f="research" aria-pressed="false">Lab research</button>
+    <button class="f" data-f="no" aria-pressed="false">Not open to NJ</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+  <ul class="list" id="list"></ul>
+</section>
+
+<footer>
+  <p>Dates and deadlines come from the 2026 cycle, so confirm 2027 details on each official site before planning around them. Sources: <a href="https://winlab.rutgers.edu/prospective-students/summer-internship/">Rutgers WINLAB Summer Internship</a> and <a href="https://horizoninspires.com/blog/data-science-programs-for-high-school-students-in-new-york/">Horizon’s list of data science programs in New York</a>.</p>
+</footer>
+</div>
+
+<script>
+const P = [
+ {id:"winlab",e:"📡",name:"WINLAB Summer Internship",inst:"Rutgers University, Wireless Information Network Laboratory",tag:"ask",free:false,research:true,
+  where:"North Brunswick, NJ (Cook Campus); you need your own transportation",cost:"Stipend for some full-time interns; hourly or unpaid spots possible",dates:"May 26 – Aug 6",due:"April 12; decisions by April 27",dm:[4,12],
+  who:"Official rules list full-time college students, but New Jersey high schoolers have joined past cohorts. Email to ask.",
+  desc:"You join a wireless and AI research team with a faculty mentor, give weekly progress updates, and finish with a written report and final presentation. Recent projects range from an AR art platform built in Unity to self-driving model cars, LLM-powered query tools, and solar-powered mesh networks.",
+  url:"https://winlab.rutgers.edu/prospective-students/summer-internship/"},
+ {id:"dbmi",e:"🫀",name:"Columbia DBMI Summer Research",inst:"Columbia University, Department of Biomedical Informatics",tag:"open",free:true,research:true,
+  where:"NewYork-Presbyterian Hospital, Manhattan",cost:"Free",dates:"Jun 29 – Aug 14",due:"February 20",dm:[2,20],
+  who:"Rising seniors and recent grads, 17+, living in the NYC metro area",
+  desc:"Seven weeks on a faculty-led health data science project using real electronic health records and methods like machine learning and natural language processing. You also take a short course, join weekly lab meetings and journal club, and design a study of your own.",
+  url:"https://www.dbmi.columbia.edu/summer/"},
+ {id:"csire",e:"💻",name:"Stony Brook CSIRE",inst:"Stony Brook University, Computer Science and Biomedical Informatics",tag:"open",free:false,research:true,
+  where:"Stony Brook, NY (Long Island)",cost:"$3,900; financial aid available",dates:"Jun 29 – Aug 8",due:"March 1",dm:[3,1],
+  who:"U.S. residents, 14+, with solid programming skills",
+  desc:"Six weeks in a faculty lab on an original project in areas like machine learning, computer vision, human-computer interaction, security, or IoT. You write and test code, run experiments, produce a paper or technical report, and present at a symposium held alongside an IEEE conference.",
+  url:"https://bmi.stonybrookmedicine.edu/csire"},
+ {id:"arise",e:"🧪",name:"NYU ARISE",inst:"NYU Tandon School of Engineering",tag:"no",free:true,research:true,
+  where:"Brooklyn, NY",cost:"Free, plus a $2,000 stipend",dates:"Jun 1–25 remote; Jul 6 – Aug 14 in the lab",due:"February 27",dm:[2,27],
+  who:"NYC residents in 10th or 11th grade",
+  desc:"Four weeks of remote research-skills workshops, then six weeks full-time in an NYU lab in fields like computer science, machine learning, or engineering, mentored by a grad student or postdoc. Ends with a poster symposium at the American Museum of Natural History.",
+  url:"https://k12stem.engineering.nyu.edu/programs/arise"},
+ {id:"ssrp",e:"🧬",name:"Rockefeller University SSRP",inst:"Rockefeller University, Summer Science Research Program",tag:"open",free:true,research:true,
+  where:"Manhattan",cost:"Free (about 32 students)",dates:"Jun 22 – Aug 6",due:"January 2",dm:[1,2],
+  who:"High school juniors or seniors, 16+",
+  desc:"You work on an original research team with mentors from Rockefeller, Memorial Sloan Kettering, and Weill Cornell for about 35 hours a week. Most teams are biomedical, but some apply machine learning and AI. No prior research experience is needed.",
+  url:"https://www.rockefeller.edu/outreach/ssrp/"},
+ {id:"amnh",e:"🏛️",name:"AMNH Science Research Mentoring Program",inst:"American Museum of Natural History",tag:"no",free:true,research:true,
+  where:"Manhattan",cost:"Free, plus a $2,500 stipend",dates:"10 months: August summer institute, then September – June",due:"March 1",dm:[3,1],
+  who:"NYC 10th–11th graders connected to the museum’s affiliated programs or schools",
+  desc:"A year-long paid internship that starts with a four-week data science summer institute, then pairs a small team with a museum scientist in astrophysics, anthropology, or biology. Ends with a public research symposium in June.",
+  url:"https://www.amnh.org/learn-teach/teens/science-research-mentoring-program"},
+ {id:"iesosc",e:"🏙️",name:"NYU Science of Smart Cities",inst:"NYU Tandon School of Engineering (ieSoSC)",tag:"no",free:true,research:false,
+  where:"Brooklyn, NY",cost:"Free",dates:"Jul 6 – Aug 7 or Jul 13 – Aug 7",due:"May 15",dm:[5,15],
+  who:"NYC residents, 9th to rising 12th grade, 15+",
+  desc:"You learn microcontrollers, circuits, and IoT sensors, then use them in a team smart-city design challenge, prototyping a product or app and pitching it to engineers, planners, and community members.",
+  url:"https://k12stem.engineering.nyu.edu/programs/iesosc"},
+ {id:"gstem",e:"🎓",name:"NYU GSTEM",inst:"NYU Courant Institute of Mathematical Sciences",tag:"open",free:false,research:true,
+  where:"Manhattan",cost:"$5,750 (+ optional $3,840 housing); need-based aid; Winston Data Scholarship covers tuition",dates:"Jun 29 – Aug 7",due:"March 1",dm:[3,1],
+  who:"Current 11th graders (about 40 per year)",
+  desc:"Six weeks of individual research with an NYU professor or researcher in biology, chemistry, computer science, math, or physics. Winston Data Scholars also take a weekly Python data science class. You earn an official NYU transcript.",
+  url:"https://wp.nyu.edu/gstem/about-us/"},
+ {id:"simons",e:"📐",name:"Simons Summer Research Program",inst:"Stony Brook University",tag:"open",free:true,research:true,
+  where:"Stony Brook, NY (Long Island)",cost:"Free (under 5% admitted)",dates:"Jun 29 – Aug 7",due:"February 5",dm:[2,5],
+  who:"Current 11th graders, 16+, U.S. citizens or permanent residents",
+  desc:"You join a faculty research group for six weeks in fields like computer science, applied math and statistics, or electrical engineering, and present a poster at the end. Past participants have gone on to Regeneron STS recognition.",
+  url:"https://www.stonybrook.edu/commcms/simons/about/about.php"},
+ {id:"gstemds",e:"📊",name:"NYU GSTEM Online Data Science",inst:"NYU, 12-week online course",tag:"open",free:false,research:false,
+  where:"Online",cost:"$2,500; financial aid available",dates:"Feb 3 – May 5",due:"Applications open Nov 14, close Dec 14",dm:[11,14],end:[12,14],
+  who:"High school juniors and seniors with a strong STEM background",
+  desc:"Twelve weeks of hands-on data science with Python and Jupyter notebooks: working with real datasets, building and testing models, visualizing results, and judging how reliable predictions are. It fits around a busy school year.",
+  url:"https://wp.nyu.edu/gstem/programs/data-science/"},
+ {id:"cs4cs",e:"🕵️",name:"NYU CS4CS: Computer Science for Cyber Security",inst:"NYU Tandon School of Engineering",tag:"open",free:true,research:false,
+  where:"Brooklyn, NY",cost:"Free",dates:"Jul 13 – Aug 7",due:"May 15",dm:[5,15],
+  who:"Rising 9th–12th graders from NYC, New Jersey, or Nassau County",
+  desc:"Three full-day weeks on cybersecurity foundations: digital forensics, cryptography, and ethical hacking, plus Capture the Flag competitions. No prior cybersecurity experience is required.",
+  url:"https://k12stem.engineering.nyu.edu/programs/cs4cs"},
+ {id:"ml",e:"🧠",name:"NYU Machine Learning",inst:"NYU Tandon School of Engineering",tag:"open",free:false,research:false,
+  where:"Brooklyn, NY",cost:"$3,180",dates:"Three 2-week sessions, Jun 15 – Jul 31",due:"April 17 (session 1); May 1 (sessions 2–3)",dm:[4,17],
+  who:"Current 9th through graduating 12th graders",
+  desc:"Two weeks of lectures and hands-on coding on the math behind machine learning: neural networks, regression, and classification, applied to image recognition, voice interfaces, and self-driving systems.",
+  url:"https://k12stem.engineering.nyu.edu/programs/ml"},
+ {id:"shp",e:"⚛️",name:"Columbia Science Honors Program",inst:"Columbia University, Saturday program",tag:"open",free:false,research:false,
+  where:"Manhattan, Saturday mornings",cost:"Varies; financial aid offered",dates:"Academic year: Sep 20 – Apr 25",due:"April 15",dm:[4,15],
+  who:"10th–12th graders at schools in NY, NJ, or CT within 75 miles of Columbia",
+  desc:"One college-level course per semester taught by Columbia researchers. Past courses have covered programming, chaos and fractals, statistical thinking, and computational science. It runs during the school year, not the summer.",
+  url:"https://outreach.engineering.columbia.edu/SHP"},
+ {id:"eng",e:"🚦",name:"Columbia ENG, CS3 Track",inst:"Columbia Engineering, Engineering the Next Generation",tag:"no",free:true,research:true,
+  where:"Manhattan",cost:"Free",dates:"Jul 6 – Aug 13",due:"December 2 – March 1",dm:[3,1],
+  who:"Rising seniors from the Harlem area",
+  desc:"Six weeks in Columbia’s Center for Smart Streetscapes using computer vision, coding, data science, and IoT to study pedestrians, traffic, and urban infrastructure in Harlem. Ends with a poster symposium.",
+  url:"https://outreach.engineering.columbia.edu/eng"},
+ {id:"cornell",e:"💡",name:"Cornell Tech Summer Innovation Intensives",inst:"Cornell Tech, 3-week pre-college program",tag:"open",free:false,research:false,
+  where:"New York City (Cornell Tech campus)",cost:"$6,500",dates:"Jul 13 – 30",due:"Opens in February; rolling admission",dm:[2,1],rolling:true,
+  who:"Ages 15–19 who have finished sophomore year",
+  desc:"Choose a track such as Data Science and Decision-Making or Interacting with AI, then build an AI-powered product in a studio guided by Cornell Tech faculty. You can earn college credit.",
+  url:"https://tech.cornell.edu/programs/summer-innovation-intensives/"},
+ {id:"precollege",e:"🐍",name:"Columbia Pre-College: Data Science and ML",inst:"Columbia University, School of Professional Studies",tag:"open",free:false,research:false,
+  where:"Manhattan",cost:"Varies; financial aid available",dates:"2-week sessions, Jun 29 – Aug 7",due:"April 2",dm:[4,2],
+  who:"Rising 9th–12th graders or students entering college",
+  desc:"A two-week intro to Python, data analysis, and how machine learning algorithms learn from data, plus data ethics and presenting results. It’s designed for little or no coding experience, so it may be too basic if you’ve already built apps.",
+  url:"https://precollege.sps.columbia.edu/course/data-science-and-machine-learning-1"}
+];
+const TAG = {open:"Open to you",ask:"Ask first",no:"Not open to NJ residents"};
+const MON = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+// Map month to cycle year: Nov/Dec 2026, Jan–May 2027
+const toDate = ([m,d]) => new Date(m >= 9 ? 2026 : 2027, m-1, d);
+
+// Next deadline
+(function(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const up = P.filter(p => p.tag !== "no").map(p => ({p, d: toDate(p.end || p.dm), s: toDate(p.dm)})).filter(x => x.d >= today).sort((a,b) => a.s - b.s)[0];
+  const el = document.getElementById("next");
+  if (!up) { el.textContent = "All listed deadlines have passed. Check each site for the next cycle."; return; }
+  const opens = up.p.end && up.s > today;
+  el.innerHTML = `<span>${opens ? "Next to open:" : "Next deadline:"}</span> <strong>${up.p.name}</strong> <span>${up.p.due}</span>`;
+})();
+
+// Calendar
+const months = [11,12,1,2,3,4,5];
+const mEl = document.getElementById("months");
+months.forEach(m => {
+  const items = P.filter(p => p.tag !== "no" && p.dm[0] === m).sort((a,b) => a.dm[1]-b.dm[1]);
+  const col = document.createElement("div"); col.className = "month";
+  col.innerHTML = `<h3>${MON[m]}</h3><div></div>`;
+  const box = col.lastChild;
+  if (!items.length) box.innerHTML = `<span style="opacity:.55;font-size:.85rem">No deadlines</span>`;
+  items.forEach(p => {
+    const b = document.createElement("button");
+    b.className = "pill " + p.tag;
+    const label = p.end ? `${MON[p.dm[0]]} ${p.dm[1]} – ${MON[p.end[0]]} ${p.end[1]}` : p.rolling ? "Opens, rolling" : `${MON[m]} ${p.dm[1]}`;
+    b.innerHTML = `<b>${label}</b>${p.name}`;
+    b.addEventListener("click", () => openProg(p.id));
+    box.appendChild(b);
+  });
+  mEl.appendChild(col);
+});
+
+// List
+const list = document.getElementById("list");
+P.forEach(p => {
+  const li = document.createElement("li"); li.className = "prog"; li.id = p.id;
+  li.dataset.tag = p.tag; li.dataset.free = p.free; li.dataset.research = p.research;
+  li.innerHTML = `<details>
+    <summary>
+      <span class="icon" aria-hidden="true">${p.e}</span>
+      <span><span class="name">${p.name}</span><br><span class="inst">${p.inst}</span>
+        <span class="meta"><span class="chip ${p.tag}">${TAG[p.tag]}</span><span class="chip plain">Deadline: ${p.due}</span><span class="chip plain">${p.free ? "Free" : "Paid"}</span></span></span>
+      <span class="chev" aria-hidden="true">›</span>
+    </summary>
+    <div class="body">
+      <dl class="facts"><dt>Where</dt><dd>${p.where}</dd><dt>Cost</dt><dd>${p.cost}</dd><dt>Dates</dt><dd>${p.dates}</dd><dt>Deadline</dt><dd>${p.due}</dd><dt>Who</dt><dd>${p.who}</dd></dl>
+      <div><p class="desc">${p.desc}</p><a class="go" href="${p.url}" target="_blank" rel="noopener">Visit the official website</a></div>
+    </div></details>`;
+  list.appendChild(li);
+});
+function openProg(id){
+  const li = document.getElementById(id);
+  if (li.hidden) setFilter("all");
+  li.querySelector("details").open = true;
+  li.scrollIntoView({block:"start"});
+  li.classList.remove("flash"); void li.offsetWidth; li.classList.add("flash");
+  li.querySelector("summary").focus({preventScroll:true});
+}
+
+// Filters
+const btns = [...document.querySelectorAll(".f")];
+function setFilter(f){
+  btns.forEach(b => b.setAttribute("aria-pressed", b.dataset.f === f));
+  let n = 0;
+  document.querySelectorAll(".prog").forEach(li => {
+    const show = f === "all" || (f === "open" && li.dataset.tag === "open") || (f === "no" && li.dataset.tag === "no") ||
+      (f === "free" && li.dataset.free === "true") || (f === "research" && li.dataset.research === "true");
+    li.hidden = !show; if (show) n++;
+  });
+  document.getElementById("count").textContent = `${n} program${n === 1 ? "" : "s"}`;
+}
+btns.forEach(b => b.addEventListener("click", () => setFilter(b.dataset.f)));
+setFilter("all");
+</script>
+</body>
+</html>
